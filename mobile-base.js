@@ -171,7 +171,7 @@ var init = function () {
 // "POINT(16061635.8271216 -4405394.3784876)"
 // "POINT(15861010.7805683 -4634024.90409203)"
 	 center: new OpenLayers.LonLat(15861010, -4634024),
-        zoom: 19
+        zoom: 20
     });
     
 	map.events.register('moveend', this, function() {
