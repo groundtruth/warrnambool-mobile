@@ -15,7 +15,7 @@ function logout()
 
 function login($pass)
 {
-  if ($pass === '2310')
+  if ($pass === '3280')
   {
     return $pass;
   }
