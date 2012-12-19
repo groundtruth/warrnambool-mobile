@@ -1,4 +1,4 @@
 #!/bin/bash -x
 
-ssh root@basemap.pozi.com "cd /var/lib/tomcat6/webapps/warrnambool-mobile && git pull origin master"
+ssh root@v3.pozi.com "cd /var/lib/tomcat6/webapps/warrnambool-mobile && git pull origin master"
 
