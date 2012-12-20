@@ -12,15 +12,18 @@ var init = function () {
 
 	var vector = new OpenLayers.Layer.Vector("GPS position", {});
 
-	// The style hardcodes the correspondance between a status code and the external graphic name
-	// We tried with adduniquerules but OpenLayers.Rule does not seem defined in Openlayers mobile
+	// The style's context function has the correspondance between a status code and a color
 	var fhLayer = new OpenLayers.Layer.Vector("Drainage Pits", {
 		styleMap: new OpenLayers.StyleMap({
-			externalGraphic: "img/drainageGrid-${i_status}.png",
-			graphicOpacity: 1.0,
-			graphicWith: 32,
-			graphicHeight: 32,
-			// Labelling of features - missing the halo though ..
+		 "default": new OpenLayers.Style({
+		 	graphicName:"square",
+			strokeColor: "#000000",
+			fillColor: "${getFillColor}",
+			strokeWidth: 1,
+			strokeOpacity: 1,
+			fillOpacity: 0.75,
+			pointRadius: 7,		
+		// Labelling of features - missing the halo though ..
                     label : "${a_id}",
                     fontColor: "black",
 			fontWeight: "900",
@@ -28,28 +31,21 @@ var init = function () {
                     fontFamily: "Arial",
                     labelAlign: "cm",
                     labelOutlineColor: "white",
- 			labelYOffset: "-22",
+ 		    labelYOffset: "-15",
                     labelOutlineWidth: 3
+		},
+		{
+		context: {
+			getFillColor:function(feature) {
+				if (feature.attributes.i_status == "0")
+					return '#585858';
+				else if (feature.attributes.i_status == "1")
+					return '#0B6121';
+			}
+		}
 		})
+           })
 	});
-
-
-///	fh = new OpenLayers.Layer.Vector("Fire Hazard",{
-///		strategies: [new OpenLayers.Strategy.Fixed()],
-///		protocol: new OpenLayers.Protocol.WFS({
-///			url: "/geoserver/wfs",
-///			featureType: "MSC_CAPTURE",
-///			featureNS: "http://www.pozi.com.au/mitchell"
-///		}),
-///		projection:new OpenLayers.Projection("EPSG:4326"),
-///		styleMap: new OpenLayers.StyleMap({
-///		    externalGraphic: "img/mobile-loc.png",
-///		    graphicOpacity: 1.0,
-///		    graphicWith: 16,
-///		    graphicHeight: 26,
-///		    graphicYOffset: -26
-///		})
-///	})            
 
 /*
 	var onSelectFeatureFunction = function(feature){
@@ -122,16 +118,13 @@ var init = function () {
 				{isBaseLayer:false,singleTile: true, ratio: 1.5}
                     ),
 	     new OpenLayers.Layer.WMS("Drainage Pits (Pending)",
-	                        ["http://m1.pozi.com/geoserver/WARRNAMBOOL/wms","http://m2.pozi.com/geoserver/WARRNAMBOOL/wms","http://m3.pozi.com/geoserver/WARRNAMBOOL/wms","http://m4.pozi.com/geoserver/WARRNAMBOOL/wms"],
-                    		{layers: 'WARRNAMBOOL:WSC_DRAINAGE_PIT_PENDING',format: 'image/png8',transparent:'true'},
+	                        "http://v3.pozi.com/geoserver/WARRNAMBOOL/wms",
+                    		{layers: 'WSC_DRAINAGE_PIT_PENDING',format: 'image/png8',transparent:'true'},
 				{isBaseLayer:false,singleTile: true, ratio: 1.5}
                     ),
             new OpenLayers.Layer.WMS("Vicmap Classic",
 	                        ["http://m1.pozi.com/geoserver/gwc/service/wms","http://m2.pozi.com/geoserver/gwc/service/wms","http://m3.pozi.com/geoserver/gwc/service/wms","http://m4.pozi.com/geoserver/gwc/service/wms"],
                     {layers: 'VicmapClassic',format: 'image/png8'}
-// singletile could reduce traffic but bigger files, except if ratio is really large
-//                    ,{ singleTile: true, ratio: 1.2 } 
-//,{attribution:"+"}
 			,{transitionEffect: 'resize'}
                     ),
             new OpenLayers.Layer.OSM("OpenStreetMap", null, {
@@ -161,15 +154,8 @@ var init = function () {
                 transitionEffect: 'resize'
             }),
             vector,
- //           sprintersLayer,
  		fhLayer
         ],
-
-//	"POLYGON((16059187.5080248 -4407176.09889032,16059187.5080248 -4403175.64345396,16063198.5841623 -4403175.64345396,16063198.5841623 -4407176.09889032,16059187.5080248 -4407176.09889032))"
-// "POINT(16158587.1091789 -4555473.11697607)"
-//        center: new OpenLayers.LonLat(16061192, -4405175),	
-// "POINT(16061635.8271216 -4405394.3784876)"
-// "POINT(15861010.7805683 -4634024.90409203)"
 	 center: new OpenLayers.LonLat(15861010, -4634024),
         zoom: 19
     });
@@ -235,28 +221,13 @@ var init = function () {
     });
 
     getFeatures = function() {
-	// Old version works - we know need to get to retrieve the data from a WFS service endpoint
-	// If WFS is not an option, we'll have to figure out a way for a web service to serve the data (in JSON?)
-//        var features = {
-//            "type": "FeatureCollection",
-//            "features": [
-//                { "type": "Feature", "geometry": {"type": "Point", "coordinates": [16157904.1632392, -4443695.26331407]},
-//                    "properties": {"Name": "Igor Tihonov", "Country":"Sweden", "City":"Gothenburg"}},
-//                { "type": "Feature", "geometry": {"type": "Point", "coordinates": [16126445.9955415, -4456187.26182341]},
-//                    "properties": {"Name": "Marc Jansen", "Country":"Germany", "City":"Bonn"}},
-//                { "type": "Feature", "geometry": {"type": "Point", "coordinates": [16147991.9910391, -4467745.95078927]},
-//                    "properties": {"Name": "Bart van den Eijnden", "Country":"Netherlands", "City":"Utrecht"}}
-//                    ]
-//        };
 	var ll=map.getCenter();
 	var ll_wgs84 = ll.transform(sm,gg);
 
         var reader = new OpenLayers.Format.GeoJSON();
         
-	Ext.Ajax.request({
-	  loadMask: true,
-//	  url: '/geoexplorer/proxy?url='+encodeURIComponent('http://49.156.17.41/ws/rest/v3/ws_fire_hazard_geojson.php'),
-	  url: '/ws/rest/v3/ws_drainage_pit_geojson.php',
+	Ext.util.JSONP.request({
+	  url: 'http://v3.pozi.com/ws/rest/v3/ws_drainage_pit_geojson.php',
 	  params: {
 	  		lat:ll_wgs84.lat,
 	  		lon:ll_wgs84.lon,
@@ -264,9 +235,10 @@ var init = function () {
 			config:'warrnamboolgis',
 			lga:'369'
 	  	},
-	  success: function(resp) {
+	  callbackKey: 'callback',
+	  callback: function(resp) {
 		// resp is the XmlHttpRequest object
-		var fh_from_geojson = reader.read(resp.responseText);
+		var fh_from_geojson = reader.read(resp);
 		// Before blindly adding, we should compare to the features already in there and decide to not include duplicates - duplicates can be found using the id of the features
 		// Or more simply, we could just remove all the features form the layer
 		fhLayer.removeAllFeatures();

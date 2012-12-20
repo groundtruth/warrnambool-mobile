@@ -3,13 +3,6 @@ Ext.ns('App');
 Ext.apply(Ext.util.Format, {defaultDateFormat: 'd M Y'});
 
 /**
- * The model for the geonames records used in the search
- */
-//Ext.regModel('PoziSearch', {
-//    fields: ['countryName', 'toponymName', 'name', 'lat', 'lng']
-//});
-
-/**
  * Custom class for the Search 
  */
 App.SearchFormPopupPanel = Ext.extend(Ext.Panel, {
@@ -33,8 +26,6 @@ App.SearchFormPopupPanel = Ext.extend(Ext.Panel, {
         this.store = new Ext.data.JsonStore({
 			autoLoad: false, //autoload the data
 			root: 'rows',
-			// Pb passing the config parameter to the Web service - for now database.inc (from ws) hardcodes the database to connect to
-			//baseParams: { config: 'mitchellgis'},
 			fields: [{name: "label"	, mapping:"row.label"},
 				{name: "xmini"	, mapping:"row.xmini"},
 				{name: "ymini"	, mapping:"row.ymini"},
@@ -227,7 +218,7 @@ App.CaptureFormPopupPanel = Ext.extend(Ext.Panel, {
 	// Deactivated mask on tap to allow for selection in the drop down list
 	hideOnMaskTap: false,
 	width: Ext.is.Phone ? undefined : 400,
-	height: Ext.is.Phone ? undefined : 500,
+	height: Ext.is.Phone ? undefined : 400,
 	scroll: false,
 	layout: 'fit',
 	fullscreen: Ext.is.Phone ? true : undefined,
@@ -241,6 +232,7 @@ App.CaptureFormPopupPanel = Ext.extend(Ext.Panel, {
 			idProperty:'id',
 			fields: [
 				{name: 'id',     type: 'string', mapping: 'row.id'},
+//				{name: 'assetid',     type: 'string', mapping: 'row.assetid'},
 				{name: 'desc',    type: 'string', mapping: 'row.desc'},
 			       {
 					name : 'iddesc',
@@ -251,6 +243,16 @@ App.CaptureFormPopupPanel = Ext.extend(Ext.Panel, {
 			]
 		});
 
+		Ext.regModel('Staff', {
+			// Potential issue if property numbers are repeated or missing - would be better to use a real PK for the Id field
+			idProperty:'id',
+			fields: [
+				{name: 'id',     type: 'string', mapping: 'row.id'},
+				{name: 'label',     type: 'string', mapping: 'row.label'}
+			]
+		});
+		
+		
 		Ext.regModel('ReferenceTable', {
 			// Potential issue if property numbers are repeated or missing - would be better to use a real PK for the Id field
 			idProperty:'id',
@@ -277,7 +279,7 @@ App.CaptureFormPopupPanel = Ext.extend(Ext.Panel, {
 	//                { label : 'Long Road', prop_num : '789789'}
 	//           ],
 			  proxy: new Ext.data.ScriptTagProxy({
-				url: '/ws/rest/v3/ws_closest_pits.php',
+				url: 'http://v3.pozi.com/ws/rest/v3/ws_closest_pits.php',
 				timeout: 5000,
 				reader:{
 					root:'rows',
@@ -299,12 +301,35 @@ App.CaptureFormPopupPanel = Ext.extend(Ext.Panel, {
 				scope: this
 			}
 		});
-		
+
+		staffStore = new Ext.data.JsonStore({
+	//           data : [
+	//                { label : '123 High St',  prop_num : '123123'},
+	//                { label : '45 Royal Parade', prop_num : '456456'},
+	//                { label : 'Long Road', prop_num : '789789'}
+	//           ],
+			  proxy: new Ext.data.ScriptTagProxy({
+				url: 'http://v3.pozi.com/ws/rest/v3/ws_staff_name.php',
+				timeout: 5000,
+				reader:{
+					root:'rows',
+					totalCount : 'total_rows'
+				},
+				extraParams: { config: 'warrnamboolgis'}
+			  }),
+			// Max number of records returned
+			pageSize: 10,	
+			model : 'Staff',
+			autoLoad : true
+		});
+				
 		equipmentDataStore = new Ext.data.JsonStore({
 	           data : [
 	                { id : '1',  label : '1 - Depot jetter'},
 	                { id : '2', label : '2 - Contractor'},
-	                { id : '3', label : '3 - Sweeper'}
+	                { id : '3', label : '3 - Sweeper'},
+	 	        { id : '4', label : '4 - Sweeper & Jetter'},
+	 	        { id : '5', label : '5 - Truck'}
 	           ],
 	           model: 'ReferenceTable'
 	        });
@@ -352,6 +377,30 @@ App.CaptureFormPopupPanel = Ext.extend(Ext.Panel, {
 		                },
 				{
 					xtype: 'numberfield',
+					label: 'Time taken (h)',
+					name:'time_taken',
+					required: true,
+					minValue:0
+		                },
+				{
+					xtype: 'selectfield',
+					label: 'Officer',
+					name:'officer',
+					id:'officer',
+					valueField : 'id',
+					displayField : 'label',
+					store : staffStore,
+					 required: true
+		                },
+				{
+					xtype: 'numberfield',
+					label: 'Number of staff',
+					name:'number_staff',
+					minValue:0,
+					value: 1
+		                },
+		                {
+					xtype: 'numberfield',
 					label: 'Depth debris (mm)',
 					name:'depth_debris',
 					minValue:0
@@ -384,19 +433,14 @@ App.CaptureFormPopupPanel = Ext.extend(Ext.Panel, {
 					// By construction, this field will always be populated - so we technically don't have to mark it as required
 					 required: true
 		                },
-				{
-					xtype: 'numberfield',
-					label: 'Time taken (h)',
-					name:'time_taken',
-					required: true,
-					minValue:0
-		                },
-				{
-					xtype: 'textfield',
-					label: 'Officer name',
-					name:'officer_name',
-					required: true
-		                },
+				{  
+					xtype:'textareafield',
+					name:'comments',
+					id:'comments',
+					label:'Comments',
+					value: '',
+					maxRows:2
+				},
 				{  
 					xtype:'hiddenfield',
 					name:'config',
@@ -545,6 +589,32 @@ App.CapturePitFormPopupPanel = Ext.extend(Ext.Panel, {
 	errorTitle: 'Communication error',
         
 	initComponent: function(){
+
+		Ext.regModel('ReferenceTable', {
+			// Potential issue if property numbers are repeated or missing - would be better to use a real PK for the Id field
+			idProperty:'id',
+			fields: [
+				{name: 'id',     type: 'string'},
+				{name: 'label',    type: 'string'}
+			]
+		});
+
+		// Ordered by historic number of occurrences in the pit database
+		pitTypeDataStore = new Ext.data.JsonStore({
+	           data : [
+	                { id : '280', label : '280 - Side Entry Pit'},
+	                { id : '284', label : '284 - Junction Pit'},
+	                { id : '282', label : '282 - Grate Pit'},
+	                { id : '534', label : '534 - Grated Side Entry Pit'},
+	                { id : '536', label : '536 - End Wall'},
+	                { id : '281', label : '281 - Soakage Pit'},
+	                { id : '283', label : '283 - Footpath Pit'},
+	                { id : '535', label : '535 - End Entry Pit'},
+	                { id : '327',  label : '327 - Litter Trap'}
+	           ],
+	           model: 'ReferenceTable'
+	        });
+
 		this.formContainer = new Ext.form.FormPanel({
 			id:'form_pit_capture',
 			scroll: true,
@@ -554,10 +624,14 @@ App.CapturePitFormPopupPanel = Ext.extend(Ext.Panel, {
 				title: 'Create new pit',
 				items: [
 				{
-					xtype: 'numberfield',
-					label: 'Asset ID',
-					name:'asset_id',
-					minValue:0
+					xtype: 'selectfield',
+					label: 'Pit type',
+					name:'pit_type',
+					id:'pit_type',
+					valueField : 'id',
+					displayField : 'label',
+					store : pitTypeDataStore,
+					 required: true
 		                },
 				{  
 					xtype:'hiddenfield',
