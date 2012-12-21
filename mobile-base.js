@@ -3,7 +3,7 @@
 var apiKey = "AqTGBsziZHIJYYxgivLBf0hVdrAk9mWO5cQcb8Yux8sW5M8c8opEC2lZqKR1ZZXf";
 
 // initialize map when page ready
-var map,fhLayer,getFeatures,clickedFeature,selectControl;
+var map,fhLayer,drainage_pit_layer,getFeatures,clickedFeature,selectControl;
 var gg = new OpenLayers.Projection("EPSG:4326");
 var sm = new OpenLayers.Projection("EPSG:900913");
 var limit_feature = 20;
@@ -88,6 +88,12 @@ var init = function () {
  	       }
 	}
     });
+
+	drainage_pit_layer = new OpenLayers.Layer.WMS("Drainage Pits (Pending)",
+	                        "http://v3.pozi.com/geoserver/WARRNAMBOOL/wms",
+                    		{layers: 'WSC_DRAINAGE_PIT_PENDING',format: 'image/png8',transparent:'true'},
+				{isBaseLayer:false,singleTile: true, ratio: 1.5}
+                    );
     
     // create map
     map = new OpenLayers.Map({
@@ -117,11 +123,7 @@ var init = function () {
                     		{layers: 'LabelClassic',format: 'image/png8',transparent:'true'},
 				{isBaseLayer:false,singleTile: true, ratio: 1.5}
                     ),
-	     new OpenLayers.Layer.WMS("Drainage Pits (Pending)",
-	                        "http://v3.pozi.com/geoserver/WARRNAMBOOL/wms",
-                    		{layers: 'WSC_DRAINAGE_PIT_PENDING',format: 'image/png8',transparent:'true'},
-				{isBaseLayer:false,singleTile: true, ratio: 1.5}
-                    ),
+	     drainage_pit_layer,
             new OpenLayers.Layer.WMS("Vicmap Classic",
 	                        ["http://m1.pozi.com/geoserver/gwc/service/wms","http://m2.pozi.com/geoserver/gwc/service/wms","http://m3.pozi.com/geoserver/gwc/service/wms","http://m4.pozi.com/geoserver/gwc/service/wms"],
                     {layers: 'VicmapClassic',format: 'image/png8'}

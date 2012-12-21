@@ -525,6 +525,9 @@ App.CaptureFormPopupPanel = Ext.extend(Ext.Panel, {
 			
 			// Reload the vector layer - it should contain the new point
 			getFeatures();
+
+			// Reload the WMS layer, in case a status/color has changed
+			drainage_pit_layer.redraw(true);
 		};
 
 		var on_capture_failure = function(form, action){
