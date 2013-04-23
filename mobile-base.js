@@ -70,9 +70,9 @@ var init = function() {
     });
 
     drainage_pit_layer = new OpenLayers.Layer.WMS(
-        "Drainage Pits (Pending)",
+        "Drainage Pits",
         "http://v3.pozi.com/geoserver/WARRNAMBOOL/wms",
-        { layers: 'WSC_DRAINAGE_PIT_PENDING', format: 'image/png8', transparent: 'true' },
+        { layers: 'WSC_DRAINAGE_PIT', format: 'image/png8', transparent: 'true' },
         { isBaseLayer: false, singleTile: true, ratio: 1.5 }
     );
 
