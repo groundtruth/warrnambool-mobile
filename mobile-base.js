@@ -1,8 +1,6 @@
-// API key for http://openlayers.org. Please get your own at
-// http://bingmapsportal.com/ and use that instead.
+// API key for http://openlayers.org. Please get your own at http://bingmapsportal.com/ and use that instead.
 var apiKey = "AqTGBsziZHIJYYxgivLBf0hVdrAk9mWO5cQcb8Yux8sW5M8c8opEC2lZqKR1ZZXf";
 
-// initialize map when page ready
 var map,
     fhLayer,
     drainage_pit_layer,
@@ -54,30 +52,6 @@ var init = function() {
         })
     });
 
-    /*
-	var onSelectFeatureFunction = function(feature){
-		//alert("nlah");
-		clickedFeature = feature;
-		if (!app.captureUpdateFormPopupPanel) {
-
-			app.captureUpdateFormPopupPanel = new App.CaptureUpdateFormPopupPanel();
-
-		}
-		else
-		{
-			// Updating the lat / lon values in the existing form
-			app.captureUpdateFormPopupPanel.setFeature(clickedFeature);
-		}
-		app.captureUpdateFormPopupPanel.show('pop');
-	};
-
-
-    selectControl = new OpenLayers.Control.SelectFeature(fhLayer, {
-        autoActivate:true,
-        onSelect: onSelectFeatureFunction});
-
-*/
-
     var geolocate = new OpenLayers.Control.Geolocate({
         id: 'locate-control',
         geolocationOptions: {
@@ -86,7 +60,6 @@ var init = function() {
             timeout: 20000
         },
         failure: function(e) {
-            //alert("There was an error obtaining the geo-location: "+e);
             switch (e.error.code) {
                 case 0: alert(OpenLayers.i18n("There was an error while retrieving your location: ") + e.error.message); break;
                 case 1: alert(OpenLayers.i18n("The user didn't accept to provide the location: ")); break;
@@ -96,18 +69,11 @@ var init = function() {
         }
     });
 
-    drainage_pit_layer = new OpenLayers.Layer.WMS("Drainage Pits (Pending)",
-    "http://v3.pozi.com/geoserver/WARRNAMBOOL/wms",
-    {
-        layers: 'WSC_DRAINAGE_PIT_PENDING',
-        format: 'image/png8',
-        transparent: 'true'
-    },
-    {
-        isBaseLayer: false,
-        singleTile: true,
-        ratio: 1.5
-    }
+    drainage_pit_layer = new OpenLayers.Layer.WMS(
+        "Drainage Pits (Pending)",
+        "http://v3.pozi.com/geoserver/WARRNAMBOOL/wms",
+        { layers: 'WSC_DRAINAGE_PIT_PENDING', format: 'image/png8', transparent: 'true' },
+        { isBaseLayer: false, singleTile: true, ratio: 1.5 }
     );
 
     // create map
@@ -128,7 +94,6 @@ var init = function() {
                 }
             }),
             geolocate
-            //		,selectControl
         ],
         layers: [
             new OpenLayers.Layer.WMS(
@@ -148,7 +113,6 @@ var init = function() {
             new OpenLayers.Layer.Bing({
                 key: apiKey,
                 type: "Road",
-                metadataParams: { mapVersion: "v1" }, // request the new map style - only useful before May 1st, 2011
                 name: "Bing Road",
                 transitionEffect: 'resize'
             }),
@@ -185,10 +149,11 @@ var init = function() {
         var pt = new OpenLayers.LonLat(e.point.x, e.point.y);
         var pt_google = pt.transform(gg, sm);
 
-        var logMsg = "X=" + e.point.x + " (" + pt_google.lon + ")";
-        logMsg = logMsg + "\n" + "Y=" + e.point.y + " (" + pt_google.lat + ")";
-        logMsg = logMsg + "\n" + "Accuracy=" + e.position.coords.accuracy;
+        // var logMsg = "X=" + e.point.x + " (" + pt_google.lon + ")";
+        // logMsg = logMsg + "\n" + "Y=" + e.point.y + " (" + pt_google.lat + ")";
+        // logMsg = logMsg + "\n" + "Accuracy=" + e.position.coords.accuracy;
         //	alert(logMsg);
+
         vector.removeAllFeatures();
         vector.addFeatures([
             new OpenLayers.Feature.Vector(
