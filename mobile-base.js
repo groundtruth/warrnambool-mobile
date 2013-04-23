@@ -3,7 +3,6 @@ var apiKey = "AqTGBsziZHIJYYxgivLBf0hVdrAk9mWO5cQcb8Yux8sW5M8c8opEC2lZqKR1ZZXf";
 
 var map,
     fhLayer,
-    drainage_pit_layer,
     getFeatures,
     clickedFeature,
     selectControl;
@@ -69,12 +68,6 @@ var init = function() {
         }
     });
 
-    drainage_pit_layer = new OpenLayers.Layer.WMS(
-        "Drainage Pits",
-        "http://v3.pozi.com/geoserver/WARRNAMBOOL/wms",
-        { layers: 'WSC_DRAINAGE_PIT', format: 'image/png8', transparent: 'true' },
-        { isBaseLayer: false, singleTile: true, ratio: 1.5 }
-    );
 
     // create map
     map = new OpenLayers.Map({
@@ -102,7 +95,18 @@ var init = function() {
                 { layers: 'LabelClassic', format: 'image/png8', transparent: 'true' },
                 { isBaseLayer: false, singleTile: true, ratio: 1.5 }
             ),
-            drainage_pit_layer,
+            new OpenLayers.Layer.WMS(
+                "Drainage Pipes",
+                "http://v3.pozi.com/geoserver/WARRNAMBOOL/wms",
+                { layers: 'WSC_DRAINAGE_PIPE', format: 'image/png8', transparent: 'true' },
+                { isBaseLayer: false, singleTile: true, ratio: 1.5 }
+            ),
+            new OpenLayers.Layer.WMS(
+                "Drainage Pits",
+                "http://v3.pozi.com/geoserver/WARRNAMBOOL/wms",
+                { layers: 'WSC_DRAINAGE_PIT', format: 'image/png8', transparent: 'true' },
+                { isBaseLayer: false, singleTile: true, ratio: 1.5 }
+            ),
             new OpenLayers.Layer.WMS(
                 "Vicmap Classic",
                 ["http://m1.pozi.com/geoserver/gwc/service/wms", "http://m2.pozi.com/geoserver/gwc/service/wms", "http://m3.pozi.com/geoserver/gwc/service/wms", "http://m4.pozi.com/geoserver/gwc/service/wms"],
