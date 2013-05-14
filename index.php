@@ -127,12 +127,27 @@
                             pack: "center"
                         },
                         items: [{
+								iconCls: "add",
+								iconMask: true,
+								handler: function() {
+									if (!app.capturePitFormPopupPanel ) {
+										app.capturePitFormPopupPanel = new App.CapturePitFormPopupPanel({
+											map: map
+										});
+									}
+									else
+									{
+										// Updating the lat / lon values in the existing form
+										app.capturePitFormPopupPanel.formContainer.setValues({
+											'lat':map.getCenter().transform(sm,gg).lat,
+											'lon':map.getCenter().transform(sm,gg).lon
+										});
+									}
+									app.capturePitFormPopupPanel.show('pop');
+								}
+                        		},{
 								xtype:"toolbartext",
-								html:'',
-								width:'auto'
-					},{
-								xtype:"toolbartext",
-								html:'',
+								html:'Pit',
 								width:'auto'
 					},{
 								xtype: "spacer"
