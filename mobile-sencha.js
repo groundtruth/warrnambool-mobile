@@ -574,3 +574,133 @@ App.CaptureFormPopupPanel = Ext.extend(Ext.Panel, {
 });
 
 
+
+App.CapturePitFormPopupPanel = Ext.extend(Ext.Panel, {
+	map: null,
+	propertyAddressStore: null,
+	floating: true,
+	modal: true,
+	centered: true,
+	// Deactivated mask on tap to allow for selection in the drop down list
+	hideOnMaskTap: false,
+	width: Ext.is.Phone ? undefined : 400,
+	height: Ext.is.Phone ? undefined : 200,
+	scroll: false,
+	layout: 'fit',
+	fullscreen: Ext.is.Phone ? true : undefined,
+	errorText: 'Sorry, we had problems communicating with the Pozi server. Please try again.',
+	errorTitle: 'Communication error',
+        
+	initComponent: function(){
+
+		Ext.regModel('ReferenceTable', {
+			// Potential issue if property numbers are repeated or missing - would be better to use a real PK for the Id field
+			idProperty:'id',
+			fields: [
+				{name: 'id',     type: 'string'},
+				{name: 'label',    type: 'string'}
+			]
+		});
+
+		// Ordered by historic number of occurrences in the pit database
+		pitTypeDataStore = new Ext.data.JsonStore({
+	           data : [
+	                { id : '280', label : '280 - Side Entry Pit'},
+	                { id : '284', label : '284 - Junction Pit'},
+	                { id : '282', label : '282 - Grate Pit'},
+	                { id : '534', label : '534 - Grated Side Entry Pit'},
+	                { id : '536', label : '536 - End Wall'},
+	                { id : '281', label : '281 - Soakage Pit'},
+	                { id : '283', label : '283 - Footpath Pit'},
+	                { id : '535', label : '535 - End Entry Pit'},
+	                { id : '327',  label : '327 - Litter Trap'}
+	           ],
+	           model: 'ReferenceTable'
+	        });
+
+		this.formContainer = new Ext.form.FormPanel({
+			id:'form_pit_capture',
+			scroll: true,
+			items: [{
+				xtype: 'fieldset',
+				scroll: true,
+				title: 'Create new pit',
+				items: [
+				{
+					xtype: 'selectfield',
+					label: 'Pit type',
+					name:'pit_type',
+					id:'pit_type',
+					valueField : 'id',
+					displayField : 'label',
+					store : pitTypeDataStore,
+					 required: true
+		                },
+				{  
+					xtype:'hiddenfield',
+					name:'lat', 
+					value: map.getCenter().transform(sm,gg).lat
+				},
+				{  
+					xtype:'hiddenfield',
+					name:'lon',
+					value: map.getCenter().transform(sm,gg).lon
+				},
+				{  
+					xtype:'hiddenfield',
+					name:'config',
+					value: 'warrnamboolgis'
+				}]
+			}]
+			,            
+			dockedItems: [{
+				xtype: 'toolbar',
+				dock: 'bottom',
+				items: [
+					{
+						text: 'Cancel',
+						handler: function() {
+							Ext.getCmp('form_pit_capture').reset();
+							app.capturePitFormPopupPanel.hide();
+						}
+					},
+					{xtype: 'spacer'},
+					{
+						text: 'Save',
+						ui: 'confirm',
+						handler: function() {
+							// Sending all that to the web service endpoint
+							Ext.getCmp('form_pit_capture').submit({
+								url: '/ws/rest/v3/ws_create_drainage_pit.php',
+								method: 'POST',
+								submitEmptyText: false,
+								waitMsg: 'Saving ...',
+								success: on_capture_success,
+								failure: on_capture_failure
+							});
+						}
+					}
+				]
+			}]
+		});
+        
+		var on_capture_success = function(form, action){
+			Ext.getCmp('form_pit_capture').reset();
+			app.capturePitFormPopupPanel.hide();
+			
+			// Reload the vector layer - it should contain the new point
+			getFeatures();
+		};
+
+		var on_capture_failure = function(form, action){
+			alert("Capture failed");
+		};
+        
+		this.items = [{
+			xtype: 'panel',
+			layout: 'fit',
+			items: [this.formContainer]
+		}];
+		App.CapturePitFormPopupPanel.superclass.initComponent.call(this);
+	}
+});
