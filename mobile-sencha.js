@@ -16,7 +16,7 @@ App.SearchFormPopupPanel = Ext.extend(Ext.Panel, {
     scroll: false,
     layout: 'fit',
     fullscreen: Ext.is.Phone ? true : undefined,
-    url: 'http://basemap.pozi.com/ws/rest/v3/ws_all_features_by_string_and_lga.php',
+    url: 'http://s1.pozi.com/ws/rest/v3/ws_all_features_by_string_and_lga.php',
     errorText: 'Sorry, we had problems communicating with Pozi search. Please try again.',
     errorTitle: 'Communication error',
     maxResults: 6,
@@ -279,7 +279,7 @@ App.CaptureFormPopupPanel = Ext.extend(Ext.Panel, {
 	//                { label : 'Long Road', prop_num : '789789'}
 	//           ],
 			  proxy: new Ext.data.ScriptTagProxy({
-				url: 'http://v3.pozi.com/ws/rest/v3/ws_closest_pits.php',
+				url: 'http://warrnambool.pozi.com/ws/rest/v3/ws_closest_pits.php',
 				timeout: 5000,
 				reader:{
 					root:'rows',
@@ -309,7 +309,7 @@ App.CaptureFormPopupPanel = Ext.extend(Ext.Panel, {
 	//                { label : 'Long Road', prop_num : '789789'}
 	//           ],
 			  proxy: new Ext.data.ScriptTagProxy({
-				url: 'http://v3.pozi.com/ws/rest/v3/ws_staff_name.php',
+				url: 'http://warrnambool.pozi.com/ws/rest/v3/ws_staff_name.php',
 				timeout: 5000,
 				reader:{
 					root:'rows',
