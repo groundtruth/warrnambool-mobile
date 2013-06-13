@@ -60,7 +60,7 @@ App.SearchFormPopupPanel = Ext.extend(Ext.Panel, {
             params: {
                 query: q,
                 lga: '369',
-                config: 'vicmap'
+                config: 'basemap'
             }
         });
     },
@@ -279,7 +279,7 @@ App.CaptureFormPopupPanel = Ext.extend(Ext.Panel, {
 	//                { label : 'Long Road', prop_num : '789789'}
 	//           ],
 			  proxy: new Ext.data.ScriptTagProxy({
-				url: 'http://warrnambool.pozi.com/ws/rest/v3/ws_closest_pits.php',
+				url: '/ws/rest/v3/ws_closest_pits.php',
 				timeout: 5000,
 				reader:{
 					root:'rows',
@@ -309,7 +309,7 @@ App.CaptureFormPopupPanel = Ext.extend(Ext.Panel, {
 	//                { label : 'Long Road', prop_num : '789789'}
 	//           ],
 			  proxy: new Ext.data.ScriptTagProxy({
-				url: 'http://warrnambool.pozi.com/ws/rest/v3/ws_staff_name.php',
+				url: '/ws/rest/v3/ws_staff_name.php',
 				timeout: 5000,
 				reader:{
 					root:'rows',

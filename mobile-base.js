@@ -92,31 +92,31 @@ var init = function() {
             new OpenLayers.Layer.WMS(
                 "Labels",
                 ["http://basemap1.pozi.com/geoserver/wms", "http://basemap2.pozi.com/geoserver/wms", "http://basemap3.pozi.com/geoserver/wms", "http://basemap4.pozi.com/geoserver/wms"],
-                { layers: 'LabelClassic', format: 'image/png8', transparent: 'true' },
+                { layers: 'VICMAP_CLASSIC:LabelClassic', format: 'image/png8', transparent: 'true' },
                 { isBaseLayer: false, singleTile: true, ratio: 1.5 }
             ),
             new OpenLayers.Layer.WMS(
                 "Drainage Pipes",
-                "http://warrnambool.pozi.com/geoserver/WARRNAMBOOL/wms",
+                "/geoserver/WARRNAMBOOL/wms",
                 { layers: 'WSC_DRAINAGE_PIPE', format: 'image/png8', transparent: 'true' },
                 { isBaseLayer: false, singleTile: true, ratio: 1.5 }
             ),
             new OpenLayers.Layer.WMS(
                 "Drainage Pits (Pending)",
-                "http://warrnambool.pozi.com/geoserver/WARRNAMBOOL/wms",
+                "/geoserver/WARRNAMBOOL/wms",
                 { layers: 'WSC_DRAINAGE_PIT_PENDING', format: 'image/png8', transparent: 'true' },
                 { isBaseLayer: false, singleTile: true, ratio: 1.5 }
             ),
             new OpenLayers.Layer.WMS(
                 "Drainage Pits",
-                "http://warrnambool.pozi.com/geoserver/WARRNAMBOOL/wms",
+                "/geoserver/WARRNAMBOOL/wms",
                 { layers: 'WSC_DRAINAGE_PIT', format: 'image/png8', transparent: 'true' },
                 { isBaseLayer: false, singleTile: true, ratio: 1.5 }
             ),
             new OpenLayers.Layer.WMS(
                 "Vicmap Classic",
-                ["http://basemap1.pozi.com/geoserver/gwc/service/wms", "http://basemap2.pozi.com/geoserver/gwc/service/wms", "http://basemap3.pozi.com/geoserver/gwc/service/wms", "http://basemap4.pozi.com/geoserver/gwc/service/wms"],
-                { layers: 'VicmapClassic', format: 'image/png8' },
+                ["http://basemap1.pozi.com/geoserver/wms", "http://basemap2.pozi.com/geoserver/wms", "http://basemap3.pozi.com/geoserver/wms", "http://basemap4.pozi.com/geoserver/wms"],
+                { layers: 'VICMAP_CLASSIC:VicmapClassic', format: 'image/png8' },
                 { transitionEffect: 'resize' }
             ),
             new OpenLayers.Layer.OSM("OpenStreetMap", null, { transitionEffect: 'resize' }),
@@ -210,7 +210,7 @@ var init = function() {
         var reader = new OpenLayers.Format.GeoJSON();
 
         Ext.util.JSONP.request({
-            url: 'http://warrnambool.pozi.com/ws/rest/v3/ws_drainage_pit_geojson.php',
+            url: '/ws/rest/v3/ws_drainage_pit_geojson.php',
             params: {
                 lat: ll_wgs84.lat,
                 lon: ll_wgs84.lon,
