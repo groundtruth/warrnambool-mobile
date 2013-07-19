@@ -15,7 +15,7 @@ var init = function() {
     var vector = new OpenLayers.Layer.Vector("GPS position", {});
 
     // The style's context function has the correspondance between a status code and a color
-    var fhLayer = new OpenLayers.Layer.Vector("Drainage Pits", {
+    var fhLayer = new OpenLayers.Layer.Vector("Drainage Pits (Nearest)", {
         styleMap: new OpenLayers.StyleMap({
             "default": new OpenLayers.Style(
                 {
@@ -102,15 +102,15 @@ var init = function() {
                 { isBaseLayer: false, singleTile: true, ratio: 1.5 }
             ),
             new OpenLayers.Layer.WMS(
-                "Drainage Pits (Pending)",
+                "Drainage Pits (Shape)",
                 "/geoserver/WARRNAMBOOL/wms",
-                { layers: 'WSC_DRAINAGE_PIT_PENDING', format: 'image/png8', transparent: 'true' },
+                { layers: 'WSC_DRAINAGE_PIT', format: 'image/png8', transparent: 'true' },
                 { isBaseLayer: false, singleTile: true, ratio: 1.5 }
             ),
             new OpenLayers.Layer.WMS(
-                "Drainage Pits",
+                "Drainage Pits (Pending)",
                 "/geoserver/WARRNAMBOOL/wms",
-                { layers: 'WSC_DRAINAGE_PIT', format: 'image/png8', transparent: 'true' },
+                { layers: 'WSC_DRAINAGE_PIT_PENDING', format: 'image/png8', transparent: 'true' },
                 { isBaseLayer: false, singleTile: true, ratio: 1.5 }
             ),
             new OpenLayers.Layer.WMS(
