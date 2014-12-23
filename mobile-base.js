@@ -113,13 +113,19 @@ var init = function() {
                 { layers: 'WSC_DRAINAGE_PIT_PENDING', format: 'image/png8', transparent: 'true' },
                 { isBaseLayer: false, singleTile: true, ratio: 1.5 }
             ),
-            new OpenLayers.Layer.WMS(
-                "Vicmap Classic",
-                ["http://basemap1.pozi.com/geoserver/wms", "http://basemap2.pozi.com/geoserver/wms", "http://basemap3.pozi.com/geoserver/wms", "http://basemap4.pozi.com/geoserver/wms"],
-                { layers: 'VICMAP_CLASSIC:VicmapClassic', format: 'image/png8' },
-                { transitionEffect: 'resize' }
+            new OpenLayers.Layer.XYZ(
+                "OpenStreetMap", 
+                [
+                    "http://otile1.mqcdn.com/tiles/1.0.0/map/${z}/${x}/${y}.png",
+                    "http://otile2.mqcdn.com/tiles/1.0.0/map/${z}/${x}/${y}.png",
+                    "http://otile3.mqcdn.com/tiles/1.0.0/map/${z}/${x}/${y}.png",
+                    "http://otile4.mqcdn.com/tiles/1.0.0/map/${z}/${x}/${y}.png"
+                ],
+                {
+                    attribution: "Data, imagery and map information provided by <a href='http://www.mapquest.com/'  target='_blank'>MapQuest</a>, <a href='http://www.openstreetmap.org/' target='_blank'>Open Street Map</a> and contributors, <a href='http://creativecommons.org/licenses/by-sa/2.0/' target='_blank'>CC-BY-SA</a>  <img src='http://developer.mapquest.com/content/osm/mq_logo.png' border='0'>",
+                    transitionEffect: "resize"
+                }
             ),
-            new OpenLayers.Layer.OSM("OpenStreetMap", null, { transitionEffect: 'resize' }),
             new OpenLayers.Layer.Bing({
                 key: apiKey,
                 type: "Road",
@@ -142,7 +148,7 @@ var init = function() {
             fhLayer
         ],
         center: new OpenLayers.LonLat(15861010, -4634024),
-        zoom: 19
+        zoom: 18
     });
 
     map.events.register('moveend', this, function() { getFeatures(); });
